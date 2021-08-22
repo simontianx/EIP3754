@@ -1,2 +1,2 @@
 # ERC720
-EIP-721 Standard
+A vanilla NFT standard.
