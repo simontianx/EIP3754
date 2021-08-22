@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/utils/structs/EnumerableMap.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
-interface IERC720 is IERC165 {
+interface IERC3754 is IERC165 {
     event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
     event Approval(address indexed owner, address indexed approved, uint256 indexed tokenId);
     event ApprovalForAll(address indexed owner, address indexed operator, bool approved);
@@ -25,7 +25,7 @@ interface IERC720 is IERC165 {
     function safeTransferFrom(address from, address to, uint256 tokenId, bytes calldata data) external;
 }
 
-contract ERC720 is Context, IERC720 {
+contract ERC3754 is Context, IERC3754 {
     using Address for address;
     using EnumerableSet for EnumerableSet.UintSet;
     using EnumerableMap for EnumerableMap.UintToAddressMap;
@@ -57,22 +57,22 @@ contract ERC720 is Context, IERC720 {
     }
 
     function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
-        return interfaceId == type(IERC720).interfaceId;
+        return interfaceId == type(IERC3754).interfaceId;
     }
 
     /**
-     * @dev See {IERC720-balanceOf}.
+     * @dev See {IERC3754-balanceOf}.
      */
     function balanceOf(address owner) public view virtual override returns (uint256) {
-        require(owner != address(0), "ERC720: balance query for the zero address");
+        require(owner != address(0), "ERC3754: balance query for the zero address");
         return _holderTokens[owner].length();
     }
 
     /**
-     * @dev See {IERC720-ownerOf}.
+     * @dev See {IERC3754-ownerOf}.
      */
     function ownerOf(uint256 tokenId) public view virtual override returns (address) {
-        return _tokenOwners.get(tokenId, "ERC720: owner query for nonexistent token");
+        return _tokenOwners.get(tokenId, "ERC3754: owner query for nonexistent token");
     }
 
     /**
@@ -98,73 +98,73 @@ contract ERC720 is Context, IERC720 {
     }
 
     /**
-     * @dev See {IERC720-approve}.
+     * @dev See {IERC3754-approve}.
      */
     function approve(address to, uint256 tokenId) public virtual override {
-        address owner = ERC720.ownerOf(tokenId);
-        require(to != owner, "ERC720: approval to current owner");
+        address owner = ERC3754.ownerOf(tokenId);
+        require(to != owner, "ERC3754: approval to current owner");
 
-        require(_msgSender() == owner || ERC720.isApprovedForAll(owner, _msgSender()),
-            "ERC720: approve caller is not owner nor approved for all"
+        require(_msgSender() == owner || ERC3754.isApprovedForAll(owner, _msgSender()),
+            "ERC3754: approve caller is not owner nor approved for all"
         );
 
         _approve(to, tokenId);
     }
 
     /**
-     * @dev See {IERC720-getApproved}.
+     * @dev See {IERC3754-getApproved}.
      */
     function getApproved(uint256 tokenId) public view virtual override returns (address) {
-        require(_exists(tokenId), "ERC720: approved query for nonexistent token");
+        require(_exists(tokenId), "ERC3754: approved query for nonexistent token");
 
         return _tokenApprovals[tokenId];
     }
 
     /**
-     * @dev See {IERC720-setApprovalForAll}.
+     * @dev See {IERC3754-setApprovalForAll}.
      */
     function setApprovalForAll(address operator, bool approved) public virtual override {
-        require(operator != _msgSender(), "ERC720: approve to caller");
+        require(operator != _msgSender(), "ERC3754: approve to caller");
 
         _operatorApprovals[_msgSender()][operator] = approved;
         emit ApprovalForAll(_msgSender(), operator, approved);
     }
 
     /**
-     * @dev See {IERC720-isApprovedForAll}.
+     * @dev See {IERC3754-isApprovedForAll}.
      */
     function isApprovedForAll(address owner, address operator) public view virtual override returns (bool) {
         return _operatorApprovals[owner][operator];
     }
 
     /**
-     * @dev See {IERC720-transferFrom}.
+     * @dev See {IERC3754-transferFrom}.
      */
     function transferFrom(address from, address to, uint256 tokenId) public virtual override {
         //solhint-disable-next-line max-line-length
-        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC720: transfer caller is not owner nor approved");
+        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC3754: transfer caller is not owner nor approved");
 
         _transfer(from, to, tokenId);
     }
 
     /**
-     * @dev See {IERC720-safeTransferFrom}.
+     * @dev See {IERC3754-safeTransferFrom}.
      */
     function safeTransferFrom(address from, address to, uint256 tokenId) public virtual override {
         safeTransferFrom(from, to, tokenId, "");
     }
 
     /**
-     * @dev See {IERC720-safeTransferFrom}.
+     * @dev See {IERC3754-safeTransferFrom}.
      */
     function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data) public virtual override {
-        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC720: transfer caller is not owner nor approved");
+        require(_isApprovedOrOwner(_msgSender(), tokenId), "ERC3754: transfer caller is not owner nor approved");
         _safeTransfer(from, to, tokenId, _data);
     }
 
     /**
      * @dev Safely transfers `tokenId` token from `from` to `to`, checking first that contract recipients
-     * are aware of the ERC720 protocol to prevent tokens from being forever locked.
+     * are aware of the ERC3754 protocol to prevent tokens from being forever locked.
      *
      * `_data` is additional data, it has no specified format and it is sent in call to `to`.
      *
@@ -176,13 +176,13 @@ contract ERC720 is Context, IERC720 {
      * - `from` cannot be the zero address.
      * - `to` cannot be the zero address.
      * - `tokenId` token must exist and be owned by `from`.
-     * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC720Received}, which is called upon a safe transfer.
+     * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC3754Received}, which is called upon a safe transfer.
      *
      * Emits a {Transfer} event.
      */
     function _safeTransfer(address from, address to, uint256 tokenId, bytes memory _data) internal virtual {
         _transfer(from, to, tokenId);
-        require(_checkOnERC720Received(from, to, tokenId, _data), "ERC720: transfer to non ERC720Receiver implementer");
+        require(_checkOnERC3754Received(from, to, tokenId, _data), "ERC3754: transfer to non ERC3754Receiver implementer");
     }
 
     /**
@@ -205,9 +205,9 @@ contract ERC720 is Context, IERC720 {
      * - `tokenId` must exist.
      */
     function _isApprovedOrOwner(address spender, uint256 tokenId) internal view virtual returns (bool) {
-        require(_exists(tokenId), "ERC720: operator query for nonexistent token");
-        address owner = ERC720.ownerOf(tokenId);
-        return (spender == owner || getApproved(tokenId) == spender || ERC720.isApprovedForAll(owner, spender));
+        require(_exists(tokenId), "ERC3754: operator query for nonexistent token");
+        address owner = ERC3754.ownerOf(tokenId);
+        return (spender == owner || getApproved(tokenId) == spender || ERC3754.isApprovedForAll(owner, spender));
     }
 
     /**
@@ -216,7 +216,7 @@ contract ERC720 is Context, IERC720 {
      * Requirements:
      d*
      * - `tokenId` must not exist.
-     * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC720Received}, which is called upon a safe transfer.
+     * - If `to` refers to a smart contract, it must implement {IERC721Receiver-onERC3754Received}, which is called upon a safe transfer.
      *
      * Emits a {Transfer} event.
      */
@@ -225,12 +225,12 @@ contract ERC720 is Context, IERC720 {
     }
 
     /**
-     * @dev Same as {xref-ERC720-_safeMint-address-uint256-}[`_safeMint`], with an additional `data` parameter which is
-     * forwarded in {IERC721Receiver-onERC720Received} to contract recipients.
+     * @dev Same as {xref-ERC3754-_safeMint-address-uint256-}[`_safeMint`], with an additional `data` parameter which is
+     * forwarded in {IERC721Receiver-onERC3754Received} to contract recipients.
      */
     function _safeMint(address to, uint256 tokenId, bytes memory _data) internal virtual {
         _mint(to, tokenId);
-        require(_checkOnERC720Received(address(0), to, tokenId, _data), "ERC720: transfer to non ERC720Receiver implementer");
+        require(_checkOnERC3754Received(address(0), to, tokenId, _data), "ERC3754: transfer to non ERC3754Receiver implementer");
     }
 
     /**
@@ -246,8 +246,8 @@ contract ERC720 is Context, IERC720 {
      * Emits a {Transfer} event.
      */
     function _mint(address to, uint256 tokenId) internal virtual {
-        require(to != address(0), "ERC720: mint to the zero address");
-        require(!_exists(tokenId), "ERC720: token already minted");
+        require(to != address(0), "ERC3754: mint to the zero address");
+        require(!_exists(tokenId), "ERC3754: token already minted");
 
         _beforeTokenTransfer(address(0), to, tokenId);
 
@@ -269,7 +269,7 @@ contract ERC720 is Context, IERC720 {
      * Emits a {Transfer} event.
      */
     function _burn(uint256 tokenId) internal virtual {
-        address owner = ERC720.ownerOf(tokenId); // internal owner
+        address owner = ERC3754.ownerOf(tokenId); // internal owner
 
         _beforeTokenTransfer(owner, address(0), tokenId);
 
@@ -295,8 +295,8 @@ contract ERC720 is Context, IERC720 {
      * Emits a {Transfer} event.
      */
     function _transfer(address from, address to, uint256 tokenId) internal virtual {
-        require(ERC720.ownerOf(tokenId) == from, "ERC720: transfer of token that is not own"); // internal owner
-        require(to != address(0), "ERC720: transfer to the zero address");
+        require(ERC3754.ownerOf(tokenId) == from, "ERC3754: transfer of token that is not own"); // internal owner
+        require(to != address(0), "ERC3754: transfer to the zero address");
 
         _beforeTokenTransfer(from, to, tokenId);
 
@@ -312,7 +312,7 @@ contract ERC720 is Context, IERC720 {
     }
 
     /**
-     * @dev Internal function to invoke {IERC721Receiver-onERC720Received} on a target address.
+     * @dev Internal function to invoke {IERC721Receiver-onERC3754Received} on a target address.
      * The call is not executed if the target address is not a contract.
      *
      * @param from address representing the previous owner of the given token ID
@@ -321,7 +321,7 @@ contract ERC720 is Context, IERC720 {
      * @param _data bytes optional data to send along with the call
      * @return bool whether the call correctly returned the expected magic value
      */
-    function _checkOnERC720Received(address from, address to, uint256 tokenId, bytes memory _data)
+    function _checkOnERC3754Received(address from, address to, uint256 tokenId, bytes memory _data)
         private returns (bool)
     {
         if (to.isContract()) {
@@ -329,7 +329,7 @@ contract ERC720 is Context, IERC720 {
                 return retval == IERC721Receiver(to).onERC721Received.selector;
             } catch (bytes memory reason) {
                 if (reason.length == 0) {
-                    revert("ERC720: transfer to non ERC720Receiver implementer");
+                    revert("ERC3754: transfer to non ERC3754Receiver implementer");
                 } else {
                     // solhint-disable-next-line no-inline-assembly
                     assembly {
@@ -344,7 +344,7 @@ contract ERC720 is Context, IERC720 {
 
     function _approve(address to, uint256 tokenId) private {
         _tokenApprovals[tokenId] = to;
-        emit Approval(ERC720.ownerOf(tokenId), to, tokenId); // internal owner
+        emit Approval(ERC3754.ownerOf(tokenId), to, tokenId); // internal owner
     }
 
     /**
