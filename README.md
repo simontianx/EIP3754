@@ -1,2 +1,2 @@
-# ERC720
+# ERC3754
 A vanilla NFT standard.
