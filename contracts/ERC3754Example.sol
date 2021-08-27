@@ -375,7 +375,7 @@ contract OwnableToken is ERC3754 {
         _approve(address(this), tokenId);
     }
 
-    function execute(uint256 tokenId, address target, bytes32 calldata data) public {
+    function execute(uint256 tokenId, address target, bytes memory data) public {
         require(ownerOf(tokenId) == _msgSender(), "Must be called by owner of tokenId");
         (bool success, ) = target.call{value: 0}(data);
         require(success, "Not successful");
