@@ -5,7 +5,7 @@ pragma solidity 0.8.4;
 import "./ERC3754.sol";
 
 contract TradeableRight is ERC3754 {
-    constructor() ERC3754("TradeableRight", "TRT") {}
+    constructor() ERC3754("TradeableRight Token", "TRT") {}
 
     mapping(uint256 => uint256) _ownershipPrice;
 
