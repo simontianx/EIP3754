@@ -9,19 +9,22 @@ contract TradeableRight is ERC3754 {
 
     mapping(uint256 => uint256) _ownershipPrice;
 
+    modifier onlyTokenOwner(uint256 tokenId) {
+        require(ownerOf(tokenId) == _msgSender(), "Must be called by token owner");
+        _;
+    }
+
     function mint(address to, uint256 tokenId) {
         _mint(to, tokenId);
         _approve(address(this), tokenId);
     }
 
-    function execute(uint256 tokenId, address target, bytes memory data) public {
-        require(ownerOf(tokenId) == _msgSender(), "Must be called by token owner");
+    function execute(uint256 tokenId, address target, bytes memory data) public onlyTokenOwner(tokenId) {
         (bool success, ) = target.call{value: 0}(data);
         require(success, "Not successful");
     }
 
-    function setOwnershipPrice(uint256 tokenId, uint256 value) public {
-        require(ownerOf(tokenId) == _msgSender(), "Must be called by token owner");
+    function setOwnershipPrice(uint256 tokenId, uint256 value) public onlyTokenOwner(tokenId) {
         require(value > 0, "Price must be greater than 0");
         _ownershipPrice[tokenId] = value;
     }
