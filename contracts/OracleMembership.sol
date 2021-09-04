@@ -75,7 +75,7 @@ contract OracleMembership is ERC3754 {
     }
 
     function isMember(address account) public view returns (bool) {
-        return _holderTokens.length() > 0;
+        return _holderTokens[account].length() > 0;
     }
 
     function setOwnershipPrice(uint256 tokenId, uint256 value) public onlyTokenOwner(tokenId) {
