@@ -7,7 +7,7 @@ import "./ERC3754.sol";
 contract TradeableRight is ERC3754 {
     constructor() ERC3754("TradeableRight Token", "TRT") {}
 
-    mapping(uint256 => uint256) _ownershipPrice;
+    mapping(uint256 => uint256) public _ownershipPrice;
 
     modifier onlyTokenOwner(uint256 tokenId) {
         require(ownerOf(tokenId) == _msgSender(), "Must be called by token owner");
