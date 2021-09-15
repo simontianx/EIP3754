@@ -43,7 +43,7 @@ contract NFTOption is ERC3754, Ownable {
     }
 
     modifier onlyOptionOwner(uint256 optionId) {
-        require(ownerOf(optionId) == _msgSender(), "Only option owner");
+        require(ownerOf(optionId) == _msgSender(), "Only the option owner");
         _;
     }
 
@@ -75,7 +75,7 @@ contract NFTOption is ERC3754, Ownable {
     // @notice People can buy an option from other people's wallet
     function transferOption(uint256 optionId) public payable onlyOptionOwner(optionId) {
         require(!_isPresaleOver(), "Presale is over");
-        require(_optionInfo[optionId]._optionPrice > 0, "price not set");
+        require(_optionInfo[optionId]._optionPrice > 0, "Price not set");
         require(msg.value >= _optionInfo[optionId]._optionPrice, "Not enough");
 
         if (_isExpired(optionId)) {
