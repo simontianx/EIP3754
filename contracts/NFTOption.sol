@@ -19,7 +19,6 @@ contract NFTOption is ERC3754, Ownable {
 
     event TransferOption(address indexed from, address indexed to, uint256 optionId);
 
-    // The initial price of option
     INFT private immutable _nft;
     uint256 private immutable _presaleEndingTime;
     uint256 private immutable _presaleStartingTime;
@@ -48,8 +47,7 @@ contract NFTOption is ERC3754, Ownable {
         _;
     }
 
-    // @notice People purchase right token from this function.
-    // Once people purchase it, this function will mint right token for caller
+    // @notice People purchase an option with this function.
     function buyOption() public payable returns (uint256 optionId) {
         require(!_isPresaleOver(), "Presale is over");
         require(_initialOptionPrice > 0, "Initial option price not set");
@@ -63,7 +61,7 @@ contract NFTOption is ERC3754, Ownable {
         emit TransferOption(address(0), _msgSender(), optionId);
     }
 
-    // @notice Member can mint an NFT with an option
+    // @notice Member can mint an NFT with an option.
     function exerciseOption(uint256 optionId) public onlyOptionOwner(optionId) {
         if (_isExpired(optionId)) {
             _burnOption(optionId);
@@ -74,7 +72,7 @@ contract NFTOption is ERC3754, Ownable {
         _burnOption(optionId);
     }
 
-    // @notice People can call this function to transfer their right token to someone's address
+    // @notice People can buy an option from other people's wallet
     function transferOption(uint256 optionId) public payable onlyOptionOwner(optionId) {
         require(!_isPresaleOver(), "Presale is over");
         require(_optionInfo[optionId]._optionPrice > 0, "price not set");
@@ -93,39 +91,35 @@ contract NFTOption is ERC3754, Ownable {
         emit TransferOption(owner, _msgSender(), optionId);
     }
 
-    // @notice For sell the memberShip to others, the owner of token can set their token price
+    // @notice Set the option price.
     function setOptionPrice(uint256 optionId, uint256 amount) public onlyOptionOwner(optionId) {
         require(amount > 0, "Price must be greater than 0");
         _optionInfo[optionId]._optionPrice = amount;
     }
 
-    // @notice Owner can set the price of right token
+    // @notice Owner can set the initial price of all options
     function setInitialOptionPrice(uint256 amount) public onlyOwner {
         _initialOptionPrice = amount;
     }
 
-    // @notice Judge if token is expired
+    // @notice Check if an option has expired
     function _isExpired(uint256 optionId) private view returns (bool) {
         require(_exists(optionId), "Option is non-existent");
         return _optionInfo[optionId]._expiry <= block.timestamp;
     }
 
-    // @notice Judge if presale is over
+    // @notice Check if the presale is over
     function _isPresaleOver() private view returns (bool) {
         return _presaleEndingTime <= block.timestamp || _presaleOverStatus;
     }
 
-    // @notice If token is expired, call this function to burn it;
+    // @notice Burn an option
     function _burnOption(uint256 optionId) private {
         delete _optionInfo[optionId];
         _burn(optionId);
     }
 
-    // @notice Reset some attribute of right token
-    // For exmple, exchange the ownerShip of right token,
-    // reset the price of right token
-    // reset the time of minting
-    // reset the expiration time
+    // @notice Update the option with the latest information.
     function _updateInfo(address newOwner, uint256 optionId, bool init) private {
         _optionInfo[optionId]._owner = newOwner;
         _optionInfo[optionId]._optionPrice = 0;
