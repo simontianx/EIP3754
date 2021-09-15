@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-interface IERC721 {
+interface INFT {
     function mint(address to) external;
     function balanceOf(address owner) external view returns (uint256);
     function totalSupply() external view returns (uint256);
@@ -20,7 +20,7 @@ contract NFTOption is ERC3754, Ownable {
     event TransferOption(address indexed from, address indexed to, uint256 optionId);
 
     // The initial price of option
-    IERC721 private immutable _nft;
+    INFT private immutable _nft;
     uint256 private immutable _presaleEndingTime;
     uint256 private immutable _presaleStartingTime;
     uint256 private _initialOptionPrice;
@@ -36,7 +36,7 @@ contract NFTOption is ERC3754, Ownable {
     mapping(uint256 => OptionInfo) _optionInfo;
 
     constructor(address addr) ERC3754("Option Token", "OT") {
-        _nft = IERC721(addr);
+        _nft = INFT(addr);
         _presaleStartingTime = block.timestamp;
         _presaleOverStatus = false;
         _presaleEndingTime = block.timestamp + 30 days;
