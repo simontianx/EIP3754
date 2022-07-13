@@ -30,7 +30,7 @@ contract RandomNumberConsumer is VRFConsumerBase {
             0xdD3782915140c8f3b190B5D67eAc6dc5760C46E9, // VRF Coordinator
             0xa36085F69e2889c224210F603D836748e7dC0088,  // LINK Token
             0x60aE616a2155Ee3d9A68541Ba5644862310933d4  // LINKMEMBER
-        ) public
+        )
     {
         keyHash = 0x6c3699283bda56ad74f6b855546325b68d482e983852a7a82979cc4807b641f4;
         fee = 0.1 * 10 ** 18; // 0.1 LINK (Varies by network)
@@ -69,7 +69,7 @@ contract OracleMembership is ERC3754 {
         _;
     }
 
-    function mint(address to, uint256 tokenId) {
+    function mint(address to, uint256 tokenId) external {
         _mint(to, tokenId);
         _approve(address(this), tokenId);
     }
